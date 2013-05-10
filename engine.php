@@ -8,10 +8,25 @@ unset($_SESSION['script_footer']);
 ################################################################
 ## //Config
 $_SERVER['engine']['version'] = '0.1.5';
-require_once ($_SERVER['engine']['path']."/config.php");
-################################################################
-// Get params
+## Be sure settings in index.php are correct!
 
+## Default settings:
+// Path to engine
+$_SERVER['engine']['path'] = isset($_SERVER['engine']['path']) ? $_SERVER['engine']['path'] : $_SERVER['DOCUMENT_ROOT']."/engine";
+// Path to pages
+$_SERVER['engine']['pages'] = isset($_SERVER['engine']['pages']) ? $_SERVER['engine']['pages'] : $_SERVER['DOCUMENT_ROOT']."/pages";
+// Path to scripts
+$_SERVER['engine']['scripts'] = isset($_SERVER['engine']['scripts']) ? $_SERVER['engine']['scripts'] : $_SERVER['DOCUMENT_ROOT']."/scripts";
+// Default script
+$_SERVER['engine']['default_script'] = isset($_SERVER['engine']['default_script']) ? $_SERVER['engine']['default_script'] : "common";
+// Path to template
+$_SERVER['engine']['template'] = isset($_SERVER['engine']['template']) ? $_SERVER['engine']['template'] : $_SERVER['DOCUMENT_ROOT']."/template.htm";
+// Path to css file
+$_SERVER['engine']['css'] = isset($_SERVER['engine']['css']) ? $_SERVER['engine']['css'] : "/style.css";
+
+################################################################
+
+// Get url
 $url = isset($_GET['url']) ? escapeshellcmd(strip_tags(urldecode($_GET['url']))) : '';
 $place = escapeshellcmd(strip_tags(urldecode($_SERVER['REQUEST_URI'])));
 

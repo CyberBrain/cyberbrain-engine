@@ -1,1 +1,25 @@
 Php engine for my router
+
+Make sure your index.php contains this settings:
+<?php
+## Configuration
+// Path to engine
+$_SERVER['engine']['path'] = "<path-to-engine>";
+
+// Path to pages
+$_SERVER['engine']['pages'] = <path-to-pages>;
+
+// Path to scripts & default script
+$_SERVER['engine']['scripts'] = <path-to-scripts-bundles>;
+// Default script
+$_SERVER['engine']['default_script'] = "<default-script-bundle-name>";
+
+// Path to template
+$_SERVER['engine']['template'] = "<path-to-template>";
+
+// Path to css file
+$_SERVER['engine']['css'] = "<path-to-css>";
+
+## Run
+require_once ($_SERVER['engine']['path']."/engine.php");
+?>
