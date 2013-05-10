@@ -31,6 +31,6 @@ $bbcode->addCode ('center', 'simple_replace', null, array ('start_tag' => '<cent
 $bbcode->addCode ('url', 'callback_replace', 'bb_parse_url', array ('usecontent_param' => 'default'), 'link', array ('block', 'inline'), array ('link'));
 
 // Учим парсер разбирать видео
-$bbcode->addCode ('video', 'callback_replace', 'bb_parse_video', array ('usecontent_param' => 'default'), 'inline', array ('block', 'inline'), array ());
+$bbcode->addCode ('video', 'callback_replace', 'bb_parse_video', array ('usecontent_param' => 'default'), 'link', array ('block', 'inline'), array ('link'));
 
 ?>
