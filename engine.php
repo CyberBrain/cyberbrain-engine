@@ -50,16 +50,18 @@ function build_header ($url)
     return $content;
 }
 
-function build_footer ()
+function build_footer ($url)
 {
-    $content = '<small>Skynet <a href="http://code.google.com/p/zyxel-keenetic-packages/" title="Zyxmon&#039;s packages (russian)">gateway is running</a> on assimilated <a href="http://zyxel.ru/keenetic-giga" title="ZyXEL KEENETIC Giga (russian)">wireless internet router</a>. Would you like to <a href="http://forum.zyxmon.org/forum6-marshrutizatory-zyxel-keenetic.html" title="Zyxmon&#039;s KEENETIC forum (russian)">become a part of us</a>? # [ <a href="https://cyberbrain.dyndns.org:9091/transmission" title="Transmission">t</a> | <a href="https://cyberbrain.dyndns.org:9091" title="Router">r</a> | <a href="http://cyberbrain.dyndns.org/polygon" title="Polygon">p</a> ]</small>';
+    $link = $_SERVER['SERVER_NAME'].'/'.$url;
+    $content = 'Skynet <a href="http://code.google.com/p/zyxel-keenetic-packages/" title="Zyxmon&#039;s packages (russian)">gateway is running</a> on assimilated <a href="http://zyxel.ru/keenetic-giga" title="ZyXEL KEENETIC Giga (russian)">wireless internet router</a>. Would you like to <a href="http://forum.zyxmon.org/forum6-marshrutizatory-zyxel-keenetic.html" title="Zyxmon&#039;s KEENETIC forum (russian)">become a part of us</a>? # [ <a href="https://cyberbrain.dyndns.org/transmission" title="Transmission">t</a> | <a href="https://ethereal.dyndns.info" title="Router">r</a> | <a href="http://cyberbrain.dyndns.org/polygon" title="Polygon">p</a> ]
+            <p><a onclick="validatePage()" title="Unicorn W3C Validator">Unicorn W3C Validator</a></p>';
     return $content;
 }
 
 function build_head_tags ($title, $url)
 {
     $head_tags = "<title>CyberBrain: ".$title."</title>";
-    $head_tags = $head_tags."\n<link href =".$_SERVER['engine']['css']." rel='stylesheet' type='text/css'>";
+    $head_tags = $head_tags."\n".'<link href ="'.$_SERVER['engine']['css'].'" rel="stylesheet" type="text/css" />';
 
     return $head_tags;
 }
@@ -76,7 +78,7 @@ function build_page ($title, $body, $url)
     $page = str_replace('<!--REPLACE_SCRIPT_HEADER-->', @$_SESSION['script_header'], $page);
     $page = str_replace('<!--REPLACE_HEADER-->', build_header($url), $page);
     $page = str_replace('<!--REPLACE_BODY-->', $body, $page);
-    $page = str_replace('<!--REPLACE_FOOTER-->', build_footer(), $page);
+    $page = str_replace('<!--REPLACE_FOOTER-->', build_footer($url), $page);
     $page = str_replace('<!--REPLACE_SCRIPT_FOOTER-->', @$_SESSION['script_footer'], $page);
     return $page;
 }
