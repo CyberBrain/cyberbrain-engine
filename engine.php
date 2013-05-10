@@ -7,7 +7,7 @@ unset($_SESSION['script_footer']);
 
 ################################################################
 ## //Config
-$_SERVER['engine']['version'] = '0.1.5';
+$_SERVER['engine']['version'] = '0.1.6';
 ## Be sure settings in index.php are correct!
 
 ## Default settings:
@@ -15,7 +15,7 @@ $_SERVER['engine']['version'] = '0.1.5';
 $_SERVER['engine']['path'] = isset($_SERVER['engine']['path']) ? $_SERVER['engine']['path'] : $_SERVER['DOCUMENT_ROOT']."/engine";
 // Path to pages
 $_SERVER['engine']['pages'] = isset($_SERVER['engine']['pages']) ? $_SERVER['engine']['pages'] : $_SERVER['DOCUMENT_ROOT']."/pages";
-// Path to scripts
+// Path to script bundles
 $_SERVER['engine']['scripts'] = isset($_SERVER['engine']['scripts']) ? $_SERVER['engine']['scripts'] : $_SERVER['DOCUMENT_ROOT']."/scripts";
 // Default script
 $_SERVER['engine']['default_script'] = isset($_SERVER['engine']['default_script']) ? $_SERVER['engine']['default_script'] : "common";
