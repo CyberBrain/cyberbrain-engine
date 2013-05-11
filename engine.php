@@ -50,7 +50,10 @@ require_once ($_SERVER['engine']['path']."/libs/parser.php");
 
 function build_header ($url)
 {
-    $content = "[ <a href='/' title='Home'>home</a> | <a href='/video' title='Video'>video</a> ][ <a href='/blog' title='Blog'>blog</a> | <a href='/wiki' title='Wiki'>wiki</a> ][ <a href='http://cyberbrain.dyndns.org/downloads' title='Downloads'>downloads</a> | <a href='http://cyberbrain.dyndns.org:8000' title='Radio'>radio</a> | <a href='http://ethereal.dyndns.info' title='Etherial'>etherial</a> ]";
+    $content = "[ <a href='/' title='Home'>home</a> | <a href='/video' title='Video'>video</a> | <a href='/services' title='Services'>services</a> ]
+                [ <a href='/blog' title='Blog'>blog</a> | <a href='/wiki' title='Wiki'>wiki</a> ]
+                [ <a href='http://cyberbrain.dyndns.org:8000' title='Radio'>radio</a> | <a href='http://ethereal.dyndns.info' title='Etherial'>etherial</a> ]
+                [ <a href='/ca.crt' title='Skynet CA Certificate'>ca</a> ]";
     return $content;
 }
 
