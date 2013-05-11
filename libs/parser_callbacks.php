@@ -1,60 +1,81 @@
 <?php
 
-// Обработчик для [myvideo]
+// Счётчик для [video]
+$video_counter = '';
+
+// Обработчик для [video]
 function bb_parse_video ($action, $attributes, $content, $params, &$node_object)
 {
     if ($action == 'validate')
         return true;
     else {
-        $tag_full = '<div ';
+        global $video_counter;
+        $video_counter = $video_counter+1;
+
+        $tag_full = '<div class="video" ';
         // Переборка скрипта и <div>
         $scripts = get_scripts('video');
 
         $scripts[1] = $scripts[1].'<script type="text/javascript">';
 
-        if (!empty($attributes['id'])) {
-            $scripts[1] = $scripts[1].'jwplayer("video-'.$attributes['id'].'").setup({';
-            $tag_full = $tag_full.'id="video-'.$attributes['id'].'"'; }
-        else {
-            $scripts[1] = 'jwplayer("video-1").setup({';
-            $tag_full = $tag_full.'id="video-1"'; }
+        $scripts[1] = $scripts[1].'jwplayer("video-'.$video_counter.'").setup({';
+        $tag_full = $tag_full.'id="video-'.$video_counter.'"';
 
         if (!empty($attributes['source'])) {
-            $pos = strripos($attributes['source'], '.rss', 1);
-                if ($pos === false)
-                    $scripts[1] = $scripts[1].' file: "'.$attributes['source'].'",';
-                else
-                    $scripts[1] = $scripts[1].' playlist: "'.$attributes['source'].'",'; }
+            $pos = strripos($attributes['source'], '.rss');
+                if ($pos === false) {
+                    $scripts[1] = $scripts[1].' file: "'.$attributes['source'].'",'; }
+                else {
+                    $scripts[1] = $scripts[1].' playlist: "'.$attributes['source'].'",'; } }
 
-        if (!empty($attributes['image']))
+        if (!empty($attributes['image'])) {
             $scripts[1] = $scripts[1].' image: "'.$attributes['image'].'",';
-        if (!empty($attributes['width']))
+            $img = '<img src="'.$attributes['image'].'"'; }
+
+        if (!empty($attributes['width'])) {
             $scripts[1] = $scripts[1].' width: "'.$attributes['width'].'",';
-        if (!empty($attributes['height']))
+            $img = $img.' width="'.$attributes['width'].'"'; }
+
+        if (!empty($attributes['height'])){
             $scripts[1] = $scripts[1].' height: "'.$attributes['height'].'",';
-        if (!empty($attributes['volume']))
-            $scripts[1] = $scripts[1].' volume: "'.$attributes['volume'].'",';
-        if (!empty($attributes['autostart']))
-            $scripts[1] = $scripts[1].' autostart: "'.$attributes['autostart'].'",';
+            $img = $img.' height="'.$attributes['height'].'"'; }
 
-        if (!empty($attributes['listbar']))
-            $scripts[1] = $scripts[1].' listbar: { position: "right", size: "'.$attributes['listbar'].'", },';
+        if (!empty($attributes['volume'])) {
+            $scripts[1] = $scripts[1].' volume: "'.$attributes['volume'].'",'; }
 
-        $scripts[1] = $scripts[1].' primary: "flash", startparam: "start", controlbar: "over", rtmp: { bufferlength: "5", }, });</script>';
+        if (!empty($attributes['autostart'])) {
+            $scripts[1] = $scripts[1].' autostart: "'.$attributes['autostart'].'",'; }
+
+        if (!empty($attributes['listbar'])) {
+            $scripts[1] = $scripts[1].' listbar: { position: "right", size: "'.$attributes['listbar'].'", },'; }
+
+        if (stristr($scripts[1], 'playlist:')) {
+            $scripts[1] = $scripts[1].' primary: "flash", rtmp: { bufferlength: "5", },'; }
+        else {
+            if (stristr($scripts[1], 'rtmp://')) {
+                $scripts[1] = $scripts[1].' primary: "flash", rtmp: { bufferlength: "5", },'; } }
+
+        $scripts[1] = $scripts[1].' startparam: "start", controlbar: "over", });</script>';
 
         $scripts = publish_scripts($scripts);
 
-        if (!empty($attributes['align']))
-            $tag_full = $tag_full.' align="'.$attributes['align'].'"';
-        if (!empty($attributes['valign']))
-            $tag_full = $tag_full.' align="'.$attributes['valign'].'"';
+        if (!empty($attributes['align'])) {
+            $tag_full = $tag_full.' align="'.$attributes['align'].'"'; }
+        if (!empty($attributes['valign'])) {
+            $tag_full = $tag_full.' align="'.$attributes['valign'].'"'; }
 
         $tag_full = $tag_full.'>';
 
-        if (!empty ($content))
-            $tag_full = $tag_full.htmlspecialchars($content).'</div>';
-        else
-            $tag_full = $tag_full.'</div>';
+        if (stristr($img, '<img ')) {
+            if (!empty ($content)) {
+                $img = $img.' alt="'.htmlspecialchars($content).'"'; }
+            $img = $img.'></img>';
+            $tag_full = $tag_full.$img; }
+        else {
+            if (!empty ($content)) {
+                $tag_full = $tag_full.htmlspecialchars($content); } }
+
+        $tag_full = $tag_full.'</div>';
 
         return $tag_full; }
 }
