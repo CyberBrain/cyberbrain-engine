@@ -169,6 +169,7 @@ function get_content ($page_address)
     $content_unparsed = explode ('<!--SEPARATOR-->', $content_unparsed);
     $content['title'] = isset($content_unparsed[0]) ? trim(str_replace("\n", "", strip_tags(urldecode($content_unparsed[0])))) : 'o_O';
     $content['body'] = isset($content_unparsed[1]) ? trim($content_unparsed[1]) : 'O_o';
+    unset($content_unparsed);
     return $content;
 }
 
@@ -179,7 +180,6 @@ function http_error ($code)
         header('Status: 404 Not Found'); }
 
     $page_address = $_SERVER['engine']['pages']."/errors/$code.txt";
-
     return $page_address;
 }
 
@@ -202,15 +202,17 @@ $content = get_content($page_address);
 // Default scripts
 publish_scripts(get_scripts($_SERVER['engine']['default_script']));
 
-
 ################################################################
-// Output
+## Output
+
+// Headers
 header("Vary: Accept");
 if (stristr($_SERVER["HTTP_ACCEPT"], "application/xhtml+xml"))
     header("Content-Type: application/xhtml+xml; charset=UTF-8");
 else
     header("Content-Type: text/html; charset=UTF-8");
-echo parser(build_page($content['title'], $content['body'], $url));
+// Page
+echo build_page($content['title'], $content['body'], $url);
 
 ################################################################
 // Magic =)
