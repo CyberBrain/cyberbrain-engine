@@ -5,7 +5,7 @@
 
 ################################################################
 ## //Config
-$_SERVER['engine']['version'] = '0.1.6';
+$_SERVER['engine']['version'] = '0.1.7';
 ## Be sure settings in index.php are correct!
 
 ## Default settings:
@@ -48,23 +48,6 @@ if (! isset($link))
 // function parser ($body)
 require_once ($_SERVER['engine']['path']."/libs/parser.php");
 
-function build_header ($url)
-{
-    $content = "[ <a href='/' title='Home'>home</a> | <a href='/video' title='Video'>video</a> | <a href='/services' title='Services'>services</a> ]
-                [ <a href='/blog' title='Blog'>blog</a> | <a href='/wiki' title='Wiki'>wiki</a> ]
-                [ <a href='http://cyberbrain.dyndns.org:8000' title='Radio'>radio</a> | <a href='http://ethereal.dyndns.info' title='Etherial'>etherial</a> ]
-                [ <a href='/ca.crt' title='Skynet CA Certificate'>ca</a> ]";
-    return $content;
-}
-
-function build_footer ($url)
-{
-    $link = $_SERVER['SERVER_NAME'].'/'.$url;
-    $content = 'Skynet <a href="http://code.google.com/p/zyxel-keenetic-packages/" title="Zyxmon&#039;s packages (russian)">gateway is running</a> on assimilated <a href="http://zyxel.ru/keenetic-giga" title="ZyXEL KEENETIC Giga (russian)">wireless internet router</a>. Would you like to <a href="http://forum.zyxmon.org/forum6-marshrutizatory-zyxel-keenetic.html" title="Zyxmon&#039;s KEENETIC forum (russian)">become a part of us</a>? # [ <a href="https://cyberbrain.dyndns.org/transmission" title="Transmission">t</a> | <a href="https://ethereal.dyndns.info" title="Router">r</a> | <a href="http://cyberbrain.dyndns.org/polygon" title="Polygon">p</a> ]
-            <p><a onclick="validatePage()" title="Unicorn W3C Validator">Unicorn W3C Validator</a></p>';
-    return $content;
-}
-
 function build_head_tags ($title, $url)
 {
     $head_tags = "<title>CyberBrain: ".$title."</title>";
@@ -76,21 +59,62 @@ function build_head_tags ($title, $url)
     return $head_tags;
 }
 
+
+function body_join($body)
+{
+    // Header & footer
+    $page_header = file_get_contents($_SERVER['engine']['pages']."/header.txt");
+    $page_footer = file_get_contents($_SERVER['engine']['pages']."/footer.txt");
+
+    $page_header = str_replace('<!--HEADER-->', '', $page_header);
+    $page_header = str_replace('<!--FOOTER-->', '', $page_header);
+
+    $full = str_replace('<!--HEADER-->', '', $body);
+    $body = str_replace('<!--FOOTER-->', '', $body);
+
+    $page_footer = str_replace('<!--HEADER-->', '', $page_footer);
+    $page_footer = str_replace('<!--FOOTER-->', '', $page_footer);
+
+    $body = $page_header.'<!--HEADER-->'.$body.'<!--FOOTER-->'.$page_footer;
+
+    return $body;
+}
+
+function body_split($body)
+{
+    $body = str_replace('&lt;!--HEADER--&gt;', '<!--HEADER-->', $body);
+    $body = str_replace('&lt;!--FOOTER--&gt;', '<!--FOOTER-->', $body);
+
+    $body = explode ('<!--HEADER-->', $body);
+
+    $content['header'] = $body[0];
+
+    $body = explode ('<!--FOOTER-->', $body[1]);
+
+    $content['body'] = $body[0];
+    $content['footer'] = $body[1];
+
+    unset($body);
+
+    return $content;
+}
+
 function build_page ($title, $body, $url)
 {
     global $script_header, $script_footer;
 
-    // Не сработает без require_once, который выше
-    $body = parser($body,true);
-    if (! isset($body))
-        $body = '';
+    $content = body_join($body);
+    unset($body);
+    $content = parser($content);
+    $content = body_split($content);
+
 
     $page = file_get_contents($_SERVER['engine']['template']);
     $page = str_replace('<!--REPLACE_HEAD_TAGS-->', build_head_tags($title,$url), $page);
     $page = str_replace('<!--REPLACE_SCRIPT_HEADER-->', $script_header, $page);
-    $page = str_replace('<!--REPLACE_HEADER-->', build_header($url), $page);
-    $page = str_replace('<!--REPLACE_BODY-->', $body, $page);
-    $page = str_replace('<!--REPLACE_FOOTER-->', build_footer($url), $page);
+    $page = str_replace('<!--REPLACE_HEADER-->', $content['header'], $page);
+    $page = str_replace('<!--REPLACE_BODY-->', $content['body'], $page);
+    $page = str_replace('<!--REPLACE_FOOTER-->', $content['footer'], $page);
     $page = str_replace('<!--REPLACE_SCRIPT_FOOTER-->', $script_footer, $page);
     return $page;
 }
@@ -178,6 +202,7 @@ $content = get_content($page_address);
 // Default scripts
 publish_scripts(get_scripts($_SERVER['engine']['default_script']));
 
+
 ################################################################
 // Output
 header("Vary: Accept");
@@ -185,12 +210,12 @@ if (stristr($_SERVER["HTTP_ACCEPT"], "application/xhtml+xml"))
     header("Content-Type: application/xhtml+xml; charset=UTF-8");
 else
     header("Content-Type: text/html; charset=UTF-8");
-echo build_page($content['title'], $content['body'], $url);
+echo parser(build_page($content['title'], $content['body'], $url));
 
 ################################################################
 // Magic =)
 unset($script_header);
 unset($script_footer);
-clearstatcache ();
+clearstatcache();
 
 ?>

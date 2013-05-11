@@ -28,9 +28,9 @@ $bbcode->addCode ('center', 'simple_replace', null, array ('start_tag' => '<cent
 //// Сложные
 
 // Гиперссылки
-$bbcode->addCode ('url', 'callback_replace', 'bb_parse_url', array ('usecontent_param' => 'default'), 'link', array ('block', 'inline'), array ('link'));
+$bbcode->addCode ('url', 'usecontent?', 'bb_parse_url', array ('usecontent_param' => 'default'), 'link', array ('block', 'inline'), array ('link'));
 
 // Учим парсер разбирать видео
-$bbcode->addCode ('video', 'callback_replace', 'bb_parse_video', array ('usecontent_param' => 'default'), 'link', array ('block', 'inline'), array ('link'));
+$bbcode->addCode ('video', 'usecontent?', 'bb_parse_video', array ('usecontent_param' => 'default'), 'link', array ('block', 'inline'), array ('link'));
 
 ?>
