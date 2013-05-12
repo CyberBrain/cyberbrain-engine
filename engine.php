@@ -5,7 +5,7 @@
 
 ################################################################
 ## // Version
-$ENGINE['version'] = '0.1.7';
+$ENGINE['version'] = '0.1.8';
 
 ## //Config
 ## Be sure settings in index.php are correct!
@@ -65,7 +65,7 @@ function body_join($body)
 
     // Header & footer
     $page_header = file_get_contents($ENGINE['pages']."/header.txt");
-    $page_footer = file_get_contents($ENGINE['pages']."/footer.txt");
+    $page_footer = file_get_contents($ENGINE['pages']."/footer.txt").'<small><p><i>Page was built by CyberBrain engine version '.$ENGINE['version'].' at '.date('Y/m/d H:i:s').'.</i></p></small>';
 
     $page_header = str_replace('<!--HEADER-->', '', $page_header);
     $page_header = str_replace('<!--FOOTER-->', '', $page_header);
@@ -181,16 +181,18 @@ function get_content ($page_address)
 
 function create_static_page($content,$url)
 {
-    if (!empty($url))
-        if (!stristr($url,'index.php')) {
-            $dirname = $_SERVER['DOCUMENT_ROOT'].'/'.$url;
-            if (!file_exists($dirname))
-                mkdir($dirname, 0755, true);
-            else
-                if (!is_dir($dirname))
-                    return; }
+    if (!empty($url)) {
+/*        if (!stristr($url,"index.php")) {
+            $url = str_replace('index.php?url=', '', $url);
+            $url = str_replace('index.php?', '', $url);
+            $url = str_replace('index.php', '', $url);
+        } */
+        $dirname = $_SERVER['DOCUMENT_ROOT'].'/'.$url;
+        if (!file_exists($dirname))
+            mkdir($dirname, 0755, true);
         else
-            return;
+            if (!is_dir($dirname))
+                return; }
     else
         $dirname = $_SERVER['DOCUMENT_ROOT'];
 
@@ -232,7 +234,6 @@ else {
     header("HTTP/1.0 404 Not Found"); 
     exit();
 }
-
 
 ################################################################
 // Magic =)
