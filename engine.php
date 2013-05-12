@@ -5,7 +5,7 @@
 
 ################################################################
 ## // Version
-$ENGINE['version'] = '0.1.8';
+$ENGINE['version'] = '0.2.0';
 
 ## //Config
 ## Be sure settings in index.php are correct!
