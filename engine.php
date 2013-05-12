@@ -203,12 +203,12 @@ function create_static_page($content,$url)
 ################################################################
 // Working with URLs
 if (! empty($url)) {
-    $page_address = $ENGINE['pages']."/".$url.".txt";
+    $page_address = $ENGINE['pages']."/".$url;
     if (! file_exists($page_address))
-        $page_address = $ENGINE['pages']."/".$url."/index.txt";
+        $page_address = $ENGINE['pages']."/".$url."/index";
 }
 else
-    $page_address = $ENGINE['pages']."/index.txt";
+    $page_address = $ENGINE['pages']."/index";
 
 if (file_exists($page_address)) {
 
