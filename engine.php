@@ -65,7 +65,7 @@ function body_join($body)
 
     // Header & footer
     $page_header = file_get_contents($ENGINE['pages']."/header.txt");
-    $page_footer = file_get_contents($ENGINE['pages']."/footer.txt").'<small><p><i>Page was built by CyberBrain engine version '.$ENGINE['version'].' at '.date('Y/m/d H:i:s').'.</i></p></small>';
+    $page_footer = file_get_contents($ENGINE['pages']."/footer.txt");
 
     $page_header = str_replace('<!--HEADER-->', '', $page_header);
     $page_header = str_replace('<!--FOOTER-->', '', $page_header);
@@ -93,7 +93,7 @@ function body_split($body)
     $body = explode ('<!--FOOTER-->', $body[1]);
 
     $content['body'] = $body[0];
-    $content['footer'] = $body[1];
+    $content['footer'] = $body[1].'<small><p><i>Page was built by CyberBrain engine version '.$ENGINE['version'].' at '.date('Y/m/d H:i:s').'.</i></p></small>';
 
     unset($body);
 
