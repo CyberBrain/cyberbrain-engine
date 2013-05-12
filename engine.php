@@ -30,18 +30,13 @@ $script_header = '';
 $script_footer = '';
 
 ################################################################
-
 // Get url
-$url = isset($_GET['url']) ? escapeshellcmd(strip_tags(urldecode($_GET['url']))) : '';
-$place = escapeshellcmd(strip_tags(urldecode($_SERVER['REQUEST_URI'])));
-
-if (! empty($url)) {
-    $pos = strpos($place, $url);
-    $link = substr ($place, $pos);
+if (isset($argv[0])) {
+    if (isset($argv[1]))
+        $_GET['url'] = $argv[1];
 }
 
-if (! isset($link))
-    $link = '';
+$url = isset($_GET['url']) ? escapeshellcmd(strip_tags(urldecode($_GET['url']))) : '';
 
 ################################################################
 // functions =)
