@@ -2,14 +2,16 @@
 
 // Подключаем библиотеку BBparser =)
 
-require_once ($_SERVER['engine']['path']."/libs/stringparser_bbcode/stringparser_bbcode.class.php");
+require_once ($ENGINE['path']."/libs/stringparser_bbcode/stringparser_bbcode.class.php");
 
 ##################################################
 // Разбор страницы
 function parser ($text, $nl_2_br = false)
 {
+    global $ENGINE;
+
     // Подключаем обработчики
-    require_once ($_SERVER['engine']['path']."/libs/parser_callbacks.php");
+    require_once ($ENGINE['path']."/libs/parser_callbacks.php");
 
     ##################################################
     // Создаём объект BBparser
@@ -17,7 +19,7 @@ function parser ($text, $nl_2_br = false)
 
     ##################################################
     // Добавляем объекту класса понятие о тэгах
-    require_once ($_SERVER['engine']['path']."/libs/parser_bbcodes.php");
+    require_once ($ENGINE['path']."/libs/parser_bbcodes.php");
 
     ##################################################
     // Удаляем имеющиеся лишние переводы строк

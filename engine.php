@@ -1,26 +1,27 @@
 <?php
-################################################################
+
 // Session
 #session_start();
 
 ################################################################
-## //Config
-$_SERVER['engine']['version'] = '0.1.7';
-## Be sure settings in index.php are correct!
+## // Version
+$ENGINE['version'] = '0.1.7';
 
+## //Config
+## Be sure settings in index.php are correct!
 ## Default settings:
 // Path to engine
-$_SERVER['engine']['path'] = isset($_SERVER['engine']['path']) ? $_SERVER['engine']['path'] : $_SERVER['DOCUMENT_ROOT']."/engine";
+$ENGINE['path'] = isset($ENGINE['path']) ? $ENGINE['path'] : $_SERVER['DOCUMENT_ROOT']."/engine";
 // Path to pages
-$_SERVER['engine']['pages'] = isset($_SERVER['engine']['pages']) ? $_SERVER['engine']['pages'] : $_SERVER['DOCUMENT_ROOT']."/pages";
+$ENGINE['pages'] = isset($ENGINE['pages']) ? $ENGINE['pages'] : $_SERVER['DOCUMENT_ROOT']."/pages";
 // Path to script bundles
-$_SERVER['engine']['scripts'] = isset($_SERVER['engine']['scripts']) ? $_SERVER['engine']['scripts'] : $_SERVER['DOCUMENT_ROOT']."/scripts";
+$ENGINE['scripts'] = isset($ENGINE['scripts']) ? $ENGINE['scripts'] : $_SERVER['DOCUMENT_ROOT']."/scripts";
 // Default script
-$_SERVER['engine']['default_script'] = isset($_SERVER['engine']['default_script']) ? $_SERVER['engine']['default_script'] : "common";
+$ENGINE['script_default'] = isset($ENGINE['script_default']) ? $ENGINE['script_default'] : "common";
 // Path to template
-$_SERVER['engine']['template'] = isset($_SERVER['engine']['template']) ? $_SERVER['engine']['template'] : $_SERVER['DOCUMENT_ROOT']."/template.htm";
+$ENGINE['template'] = isset($ENGINE['template']) ? $ENGINE['template'] : $ENGINE['pages']."/template.htm";
 // Path to css file
-$_SERVER['engine']['css'] = isset($_SERVER['engine']['css']) ? $_SERVER['engine']['css'] : "/style.css";
+$ENGINE['css'] = isset($ENGINE['css']) ? $ENGINE['css'] : "/style.css";
 
 ################################################################
 // Global scripts
@@ -46,12 +47,14 @@ if (! isset($link))
 // functions =)
 
 // function parser ($body)
-require_once ($_SERVER['engine']['path']."/libs/parser.php");
+require_once ($ENGINE['path']."/libs/parser.php");
 
 function build_head_tags ($title, $url)
 {
+    global $ENGINE;
+
     $head_tags = "<title>CyberBrain: ".$title."</title>";
-    $head_tags = $head_tags."\n".'<link href ="'.$_SERVER['engine']['css'].'" rel="stylesheet" type="text/css" />';
+    $head_tags = $head_tags."\n".'<link href ="'.$ENGINE['css'].'" rel="stylesheet" type="text/css" />';
     if (!stristr($_SERVER["HTTP_ACCEPT"], "application/xhtml+xml"))
         $head_tags = $head_tags."\n".'<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />';
     else
@@ -62,9 +65,11 @@ function build_head_tags ($title, $url)
 
 function body_join($body)
 {
+    global $ENGINE;
+
     // Header & footer
-    $page_header = file_get_contents($_SERVER['engine']['pages']."/header.txt");
-    $page_footer = file_get_contents($_SERVER['engine']['pages']."/footer.txt");
+    $page_header = file_get_contents($ENGINE['pages']."/header.txt");
+    $page_footer = file_get_contents($ENGINE['pages']."/footer.txt");
 
     $page_header = str_replace('<!--HEADER-->', '', $page_header);
     $page_header = str_replace('<!--FOOTER-->', '', $page_header);
@@ -101,7 +106,7 @@ function body_split($body)
 
 function build_page ($title, $body, $url)
 {
-    global $script_header, $script_footer;
+    global $ENGINE, $script_header, $script_footer;
 
     $content = body_join($body);
     unset($body);
@@ -109,7 +114,7 @@ function build_page ($title, $body, $url)
     $content = body_split($content);
 
 
-    $page = file_get_contents($_SERVER['engine']['template']);
+    $page = file_get_contents($ENGINE['template']);
     $page = str_replace('<!--REPLACE_HEAD_TAGS-->', build_head_tags($title,$url), $page);
     $page = str_replace('<!--REPLACE_SCRIPT_HEADER-->', $script_header, $page);
     $page = str_replace('<!--REPLACE_HEADER-->', $content['header'], $page);
@@ -121,8 +126,10 @@ function build_page ($title, $body, $url)
 
 function get_scripts ($type)
 {
+    global $ENGINE;
+
     if (!empty($type)) {
-        $script_address = $_SERVER['engine']['scripts']."/".$type.".script";
+        $script_address = $ENGINE['scripts']."/".$type.".script";
         if (file_exists($script_address)) {
             $scripts = file_get_contents($script_address);
             $scripts = explode ('<!--SEPARATOR-->', $scripts); } }
@@ -179,19 +186,19 @@ function http_error ($code)
         header('HTTP/1.0 404 Not Found');
         header('Status: 404 Not Found'); }
 
-    $page_address = $_SERVER['engine']['pages']."/errors/$code.txt";
+    $page_address = $ENGINE['pages']."/errors/$code.txt";
     return $page_address;
 }
 
 ################################################################
 // Working with URLs
 if (! empty($url)) {
-    $page_address = $_SERVER['engine']['pages']."/".$url.".txt";
+    $page_address = $ENGINE['pages']."/".$url.".txt";
     if (! file_exists($page_address))
-        $page_address = $_SERVER['engine']['pages']."/".$url."/index.txt";
+        $page_address = $ENGINE['pages']."/".$url."/index.txt";
 }
 else
-    $page_address = $_SERVER['engine']['pages']."/index.txt";
+    $page_address = $ENGINE['pages']."/index.txt";
 
 if (!file_exists($page_address))
     $page_address = http_error('404');
@@ -200,7 +207,7 @@ $content = get_content($page_address);
 
 ################################################################
 // Default scripts
-publish_scripts(get_scripts($_SERVER['engine']['default_script']));
+publish_scripts(get_scripts($ENGINE['script_default']));
 
 ################################################################
 ## Output
