@@ -83,6 +83,8 @@ function body_join($body)
 
 function body_split($body)
 {
+    global $ENGINE;
+
     $body = str_replace('&lt;!--HEADER--&gt;', '<!--HEADER-->', $body);
     $body = str_replace('&lt;!--FOOTER--&gt;', '<!--FOOTER-->', $body);
 
@@ -182,11 +184,6 @@ function get_content ($page_address)
 function create_static_page($content,$url)
 {
     if (!empty($url)) {
-/*        if (!stristr($url,"index.php")) {
-            $url = str_replace('index.php?url=', '', $url);
-            $url = str_replace('index.php?', '', $url);
-            $url = str_replace('index.php', '', $url);
-        } */
         $dirname = $_SERVER['DOCUMENT_ROOT'].'/'.$url;
         if (!file_exists($dirname))
             mkdir($dirname, 0755, true);
