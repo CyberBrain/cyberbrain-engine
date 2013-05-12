@@ -43,6 +43,7 @@ $url = isset($_GET['url']) ? escapeshellcmd(strip_tags(urldecode($_GET['url'])))
 
 // function parser ($body)
 require_once ($ENGINE['path']."/libs/parser.php");
+////
 
 function build_head_tags ($title, $url)
 {
@@ -175,14 +176,26 @@ function get_content ($page_address)
     return $content;
 }
 
-function http_error ($code)
-{
-    if ($code == '404') {
-        header('HTTP/1.0 404 Not Found');
-        header('Status: 404 Not Found'); }
+################################################################
+// "Cache" functions
 
-    $page_address = $ENGINE['pages']."/errors/$code.txt";
-    return $page_address;
+function create_static_page($content,$url)
+{
+    if (!empty($url))
+        if (!stristr($url,'index.php')) {
+            $dirname = $_SERVER['DOCUMENT_ROOT'].'/'.$url;
+            if (!file_exists($dirname))
+                mkdir($dirname, 0755, true);
+            else
+                if (!is_dir($dirname))
+                    return; }
+        else
+            return;
+    else
+        $dirname = $_SERVER['DOCUMENT_ROOT'];
+
+    $filename = $dirname.'/index.htm';
+    file_put_contents($filename,$content);
 }
 
 ################################################################
@@ -195,26 +208,31 @@ if (! empty($url)) {
 else
     $page_address = $ENGINE['pages']."/index.txt";
 
-if (!file_exists($page_address))
-    $page_address = http_error('404');
+if (file_exists($page_address)) {
 
-$content = get_content($page_address);
+    // Default scripts
+    publish_scripts(get_scripts($ENGINE['script_default']));
 
-################################################################
-// Default scripts
-publish_scripts(get_scripts($ENGINE['script_default']));
+    // Headers
+    header("Vary: Accept");
+    if (stristr($_SERVER["HTTP_ACCEPT"], "application/xhtml+xml"))
+        header("Content-Type: application/xhtml+xml; charset=UTF-8");
+    else
+        header("Content-Type: text/html; charset=UTF-8");
 
-################################################################
-## Output
+    // Page
+    $content = get_content($page_address);
+    $FULL_PAGE = build_page($content['title'], $content['body'], $url);
+    echo $FULL_PAGE;
 
-// Headers
-header("Vary: Accept");
-if (stristr($_SERVER["HTTP_ACCEPT"], "application/xhtml+xml"))
-    header("Content-Type: application/xhtml+xml; charset=UTF-8");
-else
-    header("Content-Type: text/html; charset=UTF-8");
-// Page
-echo build_page($content['title'], $content['body'], $url);
+    // Create "cached" page =)
+    create_static_page($FULL_PAGE,$url);
+    }
+else {
+    header("HTTP/1.0 404 Not Found"); 
+    exit();
+}
+
 
 ################################################################
 // Magic =)
