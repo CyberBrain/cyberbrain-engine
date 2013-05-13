@@ -1,5 +1,10 @@
 <?php
 
+function time_stamp()
+{
+    return '<p align="right"><small><i>Page was built by CyberBrain engine version '.$ENGINE['version'].' at '.date('Y/m/d H:i:s').'.</i></small></p>';
+}
+
 function scripts_get ($type)
 {
     global $ENGINE;
@@ -51,8 +56,6 @@ function page_build ($content, $url)
 {
     global $ENGINE, $script_header, $script_footer;
 
-    $content['footer'] = $content['footer'].'<br /><p align="right"><small><i>Page was built by CyberBrain engine version '.$ENGINE['version'].' at '.date('Y/m/d H:i:s').'.</i></small></p>';
-
     if (!empty($content['header']))
         $fullbody = $fullbody.'<div class="header">'.$content['header'].'</div>'."\n";
     else
@@ -61,9 +64,11 @@ function page_build ($content, $url)
 
     if (!empty($content['body']))
         $fullbody = $fullbody.'<div class="body">'.$content['body'].'</div>'."\n";
-    if (!empty($content['footer']))
-        $fullbody = $fullbody.'<div class="footer">'.$content['footer'].'</div>';
 
+    if (!empty($content['footer']))
+        $fullbody = $fullbody.'<div class="footer">'.$content['footer'].'<br>'.time_stamp().'</div>';
+    else
+        $fullbody = $fullbody.'<div class="footer">'.time_stamp().'</div>';
 
     $page = file_get_contents($ENGINE['includes'].'/'.$ENGINE['template']);
     $page = str_replace('<!--REPLACE_HEAD_TAGS-->', page_head_tags($content['title'],$url), $page);
