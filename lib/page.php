@@ -150,4 +150,19 @@ function page_head_tags ($title, $url)
     return $head_tags;
 }
 
+
+function page_all ($page_address, $url)
+{
+    // Get content
+    $content = page_content($page_address);
+
+    // Build page
+    $FULL_PAGE = page_build($content['title'], $content['body'], $url);
+
+    // Save "cache"
+    page_cache($FULL_PAGE, $_SERVER['DOCUMENT_ROOT'].'/'.$url);
+
+    return $FULL_PAGE;
+}
+
 ?>

@@ -5,7 +5,7 @@
 
 ################################################################
 ## // Version
-$ENGINE['version'] = '0.2.0';
+$ENGINE['version'] = '0.2.1';
 
 ## USER CONFIG
 ## Be sure settings in index.php are correct!
@@ -26,80 +26,16 @@ $ENGINE['css'] = isset($ENGINE['css']) ? $ENGINE['css'] : "/style.css";
 ################################################################
 // Libraries =)
 
-// function parser ($body)
+// Parser function ($body)
 require_once ($ENGINE['path']."/lib/parser.php");
 ////
 
-// ready
+// Page-specific functions
 require_once ($ENGINE['path']."/lib/page.php");
 ////
 
-################################################################
-// Global scripts
-
-$script_header = '';
-$script_footer = '';
-
-################################################################
-// Get url
-if (isset($argv[0])) {
-    if (isset($argv[1]))
-        $_GET['url'] = $argv[1];
-}
-
-$url = isset($_GET['url']) ? urldecode($_GET['url']) : '';
-
-if (!empty($url)) {
-
-    $flag = substr($url, 0, 1);
-        if ($flag === '/')
-        $url = substr($url, 1);
-
-    $flag = substr($url, -1);
-        if ($flag === '/')
-        $url = substr($url, 0, -1);
-
-    //die($url);
-
-    $page_address = $ENGINE['pages']."/".$url;
-    if (file_exists($page_address))
-        if (is_dir($page_address))
-            $page_address = $page_address."/index";
-}
-else
-    $page_address = $ENGINE['pages']."/index";
-
-################################################################
-// OUTPUT
-if (file_exists($page_address)) {
-
-    // Default scripts
-    scripts_publish(scripts_get($ENGINE['script_default']));
-
-    // Headers
-    header("Vary: Accept");
-    if (stristr($_SERVER["HTTP_ACCEPT"], "application/xhtml+xml"))
-        header("Content-Type: application/xhtml+xml; charset=UTF-8");
-    else
-        header("Content-Type: text/html; charset=UTF-8");
-
-    // Page
-    $content = page_content($page_address);
-    $FULL_PAGE = page_build($content['title'], $content['body'], $url);
-    echo $FULL_PAGE;
-
-    // Create "cached" page =)
-    page_cache($FULL_PAGE, $_SERVER['DOCUMENT_ROOT'].'/'.$url);
-    }
-else {
-    header("HTTP/1.0 404 Not Found"); 
-    exit();
-}
-
-################################################################
-// Magic =)
-unset($script_header);
-unset($script_footer);
-clearstatcache();
+// Main line =)
+require_once ($ENGINE['path']."/lib/main.php");
+////
 
 ?>
