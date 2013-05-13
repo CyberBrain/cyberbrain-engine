@@ -149,10 +149,28 @@ function page_head_tags ($title, $url)
 }
 
 
-function page_all ($page_address, $url)
+function page_all ($url)
 {
+    global $ENGINE;
+
+    $page_address = $ENGINE['pages']."/".$url;
+
+    if (file_exists($page_address)) {
+        if (is_dir($page_address)) {
+            $page_address = $page_address."/index";
+                if (!file_exists($page_address)) {
+                    return '404';
+                }
+        }
+    }
+    else
+        return '404';
+
     // Get content
     $content = page_content($page_address);
+
+    // Default scripts
+    scripts_publish(scripts_get($ENGINE['script_default']));
 
     // Build page
     $FULL_PAGE = page_build($content['title'], $content['body'], $url);
@@ -160,6 +178,7 @@ function page_all ($page_address, $url)
     // Save "cache"
     page_cache($FULL_PAGE, $_SERVER['DOCUMENT_ROOT'].'/'.$url);
 
+    // Return full page contents
     return $FULL_PAGE;
 }
 
