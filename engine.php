@@ -7,7 +7,7 @@
 ## // Version
 $ENGINE['version'] = '0.2.0';
 
-## //Config
+## USER CONFIG
 ## Be sure settings in index.php are correct!
 ## Default settings:
 // Path to engine
@@ -24,14 +24,14 @@ $ENGINE['template'] = isset($ENGINE['template']) ? $ENGINE['template'] : $ENGINE
 $ENGINE['css'] = isset($ENGINE['css']) ? $ENGINE['css'] : "/style.css";
 
 ################################################################
-// functions =)
+// Libraries =)
 
 // function parser ($body)
 require_once ($ENGINE['path']."/lib/parser.php");
 ////
 
 // ready
-require_once ($ENGINE['path']."/lib/main.php");
+require_once ($ENGINE['path']."/lib/page.php");
 ////
 
 ################################################################
@@ -74,7 +74,7 @@ else
 if (file_exists($page_address)) {
 
     // Default scripts
-    publish_scripts(get_scripts($ENGINE['script_default']));
+    scripts_publish(scripts_get($ENGINE['script_default']));
 
     // Headers
     header("Vary: Accept");
@@ -84,12 +84,12 @@ if (file_exists($page_address)) {
         header("Content-Type: text/html; charset=UTF-8");
 
     // Page
-    $content = get_content($page_address);
-    $FULL_PAGE = build_page($content['title'], $content['body'], $url);
+    $content = page_content($page_address);
+    $FULL_PAGE = page_build($content['title'], $content['body'], $url);
     echo $FULL_PAGE;
 
     // Create "cached" page =)
-    create_static_page($FULL_PAGE, $_SERVER['DOCUMENT_ROOT'].'/'.$url);
+    page_cache($FULL_PAGE, $_SERVER['DOCUMENT_ROOT'].'/'.$url);
     }
 else {
     header("HTTP/1.0 404 Not Found"); 

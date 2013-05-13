@@ -14,7 +14,7 @@ function bb_parse_video ($action, $attributes, $content, $params, &$node_object)
 
         $tag_full = '<div class="video" ';
         // Переборка скрипта и <div>
-        $scripts = get_scripts('video');
+        $scripts = scripts_get('video');
 
         $scripts[1] = $scripts[1].'<script type="text/javascript">';
 
@@ -57,7 +57,7 @@ function bb_parse_video ($action, $attributes, $content, $params, &$node_object)
 
         $scripts[1] = $scripts[1].' startparam: "start", controlbar: "over", });</script>';
 
-        $scripts = publish_scripts($scripts);
+        $scripts = scripts_publish($scripts);
 
         if (!empty($attributes['align'])) {
             $tag_full = $tag_full.' align="'.$attributes['align'].'"'; }
