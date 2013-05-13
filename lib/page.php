@@ -47,68 +47,34 @@ function scripts_publish ($scripts)
 }
 
 
-function page_body_join($body)
-{
-    global $ENGINE;
-
-    // top & bottom menu
-    $menu_top = file_get_contents($ENGINE['pages']."/menu_top.txt");
-    $menu_bottom = file_get_contents($ENGINE['pages']."/menu_bottom.txt");
-
-    $menu_top = str_replace('<!--MENU_TOP-->', '', $menu_top);
-    $menu_top = str_replace('<!--MENU_BOTTOM-->', '', $menu_top);
-
-    $full = str_replace('<!--MENU_TOP-->', '', $body);
-    $body = str_replace('<!--MENU_BOTTOM-->', '', $body);
-
-    $MENU_TOP = str_replace('<!--MENU_TOP-->', '', $MENU_TOP);
-    $MENU_TOP = str_replace('<!--MENU_BOTTOM-->', '', $MENU_TOP);
-
-    $body = $menu_top.'<!--MENU_TOP-->'.$body.'<!--MENU_BOTTOM-->'.$menu_bottom;
-
-    return $body;
-}
-
-function page_body_split($body)
-{
-    global $ENGINE;
-
-    $body = str_replace('&lt;!--MENU_TOP--&gt;', '<!--MENU_TOP-->', $body);
-    $body = str_replace('&lt;!--MENU_BOTTOM--&gt;', '<!--MENU_BOTTOM-->', $body);
-
-    $body = explode ('<!--MENU_TOP-->', $body);
-
-    $content['menu_top'] = $body[0];
-
-    $body = explode ('<!--MENU_BOTTOM-->', $body[1]);
-
-    $content['body'] = $body[0];
-    $content['menu_bottom'] = $body[1];
-
-    unset($body);
-
-    return $content;
-}
-
-
-function page_build ($title, $body, $url)
+function page_build ($content, $url)
 {
     global $ENGINE, $script_header, $script_footer;
 
-    $content = page_body_join($body);
-    unset($body);
-    $content = parser($content);
-    $content = page_body_split($content);
+    $content['footer'] = $content['footer'].'<br /><p align="right"><small><i>Page was built by CyberBrain engine version '.$ENGINE['version'].' at '.date('Y/m/d H:i:s').'.</i></small></p>';
 
-    $content['body'] = $content['body'].'<br /><p align="right"><small><i>Page was built by CyberBrain engine version '.$ENGINE['version'].' at '.date('Y/m/d H:i:s').'.</i></small></p>';
+    if (!empty($content['header']))
+        $fullbody = $fullbody.'<div class="header">'.$content['header'].'</div>'."\n";
+    else
+        if (!empty($content['title']))
+            $fullbody = $fullbody.'<div class="header">'.$content['title'].'</div>'."\n";
+
+    if (!empty($content['body']))
+        $fullbody = $fullbody.'<div class="body">'.$content['body'].'</div>'."\n";
+    if (!empty($content['footer']))
+        $fullbody = $fullbody.'<div class="footer">'.$content['footer'].'</div>';
+
 
     $page = file_get_contents($ENGINE['template']);
-    $page = str_replace('<!--REPLACE_HEAD_TAGS-->', page_head_tags($title,$url), $page);
+    $page = str_replace('<!--REPLACE_HEAD_TAGS-->', page_head_tags($content['title'],$url), $page);
     $page = str_replace('<!--REPLACE_SCRIPT_HEADER-->', $script_header, $page);
     $page = str_replace('<!--REPLACE_MENU_TOP-->', $content['menu_top'], $page);
-    $page = str_replace('<!--REPLACE_BODY-->', $content['body'], $page);
+    $page = str_replace('<!--REPLACE_BODY-->', $fullbody, $page);
     $page = str_replace('<!--REPLACE_MENU_BOTTOM-->', $content['menu_bottom'], $page);
     $page = str_replace('<!--REPLACE_SCRIPT_FOOTER-->', $script_footer, $page);
+
+    unset($fullbody);
+    unset($content);
     return $page;
 }
 
@@ -129,10 +95,61 @@ function page_cache ($content, $cache_path)
 
 function page_content ($page_address)
 {
+    global $ENGINE;
+
     $content_unparsed = file_get_contents($page_address);
-    $content_unparsed = explode ('<!--SEPARATOR-->', $content_unparsed);
-    $content['title'] = isset($content_unparsed[0]) ? trim(str_replace("\n", "", strip_tags(urldecode($content_unparsed[0])))) : 'o_O';
-    $content['body'] = isset($content_unparsed[1]) ? trim($content_unparsed[1]) : 'O_o';
+
+    // top & bottom menu
+    $menu_top = file_get_contents($ENGINE['pages']."/menu_top.txt");
+    $menu_bottom = file_get_contents($ENGINE['pages']."/menu_bottom.txt");
+
+    $content_unparsed = '[menu_top]'.$menu_top.'[/menu_top]'.$content_unparsed;
+    $content_unparsed = $content_unparsed.'[menu_bottom]'.$menu_bottom.'[/menu_bottom]';
+
+    $content_unparsed = parser($content_unparsed);
+
+    if (stristr($content_unparsed,'[menu_top]')) {
+        $content_unparsed = str_replace('[menu_top]', '', $content_unparsed); }
+    if (stristr($content_unparsed,'[/menu_top]')) {
+        $content_unparsed = explode ('[/menu_top]', $content_unparsed);
+        $content['menu_top'] = isset($content_unparsed[0]) ? trim($content_unparsed[0]) : '';
+        $content_unparsed = isset($content_unparsed[1]) ? trim($content_unparsed[1]) : ''; }
+
+    if (stristr($content_unparsed,'[title]')) {
+        $content_unparsed = str_replace('[title]', '', $content_unparsed); }
+    if (stristr($content_unparsed,'[/title]')) {
+        $content_unparsed = explode ('[/title]', $content_unparsed);
+        $content['title'] = isset($content_unparsed[0]) ? trim($content_unparsed[0]) : '';
+        $content_unparsed = isset($content_unparsed[1]) ? trim($content_unparsed[1]) : ''; }
+
+    if (stristr($content_unparsed,'[header]')) {
+        $content_unparsed = str_replace('[header]', '', $content_unparsed); }
+    if (stristr($content_unparsed,'[/header]')) {
+        $content_unparsed = explode ('[/header]', $content_unparsed);
+        $content['header'] = isset($content_unparsed[0]) ? trim($content_unparsed[0]) : '';
+        $content_unparsed = isset($content_unparsed[1]) ? trim($content_unparsed[1]) : ''; }
+
+    if (stristr($content_unparsed,'[body]')) {
+        $content_unparsed = str_replace('[body]', '', $content_unparsed); }
+    if (stristr($content_unparsed,'[/body]')) {
+        $content_unparsed = explode ('[/body]', $content_unparsed);
+        $content['body'] = isset($content_unparsed[0]) ? trim($content_unparsed[0]) : '';
+        $content_unparsed = isset($content_unparsed[1]) ? trim($content_unparsed[1]) : ''; }
+
+    if (stristr($content_unparsed,'[footer]')) {
+        $content_unparsed = str_replace('[footer]', '', $content_unparsed); }
+    if (stristr($content_unparsed,'[/footer]')) {
+        $content_unparsed = explode ('[/footer]', $content_unparsed);
+        $content['footer'] = isset($content_unparsed[0]) ? trim($content_unparsed[0]) : '';
+        $content_unparsed = isset($content_unparsed[1]) ? trim($content_unparsed[1]) : ''; }
+
+    if (stristr($content_unparsed,'[menu_bottom]')) {
+        $content_unparsed = str_replace('[menu_bottom]', '', $content_unparsed); }
+    if (stristr($content_unparsed,'[/menu_bottom]')) {
+        $content_unparsed = explode ('[/menu_bottom]', $content_unparsed);
+        $content['menu_bottom'] = isset($content_unparsed[0]) ? trim($content_unparsed[0]) : '';
+        $content_unparsed = isset($content_unparsed[1]) ? trim($content_unparsed[1]) : ''; }
+
     unset($content_unparsed);
     return $content;
 }
@@ -173,7 +190,7 @@ function page_all ($url)
     scripts_publish(scripts_get($ENGINE['script_default']));
 
     // Build page
-    $FULL_PAGE = page_build($content['title'], $content['body'], $url);
+    $FULL_PAGE = page_build($content, $url);
 
     // Save "cache"
     page_cache($FULL_PAGE, $_SERVER['DOCUMENT_ROOT'].'/'.$url);

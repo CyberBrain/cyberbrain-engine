@@ -6,7 +6,7 @@ require_once ($ENGINE['path']."/thirdparty/stringparser_bbcode/stringparser_bbco
 
 ##################################################
 // Разбор страницы
-function parser ($text, $nl_2_br = false)
+function parser ($text)
 {
     global $ENGINE;
 
@@ -34,8 +34,7 @@ function parser ($text, $nl_2_br = false)
     $text = str_replace('&gt;', '>', $text);
 
     // И спецсимволы в теги
-    if ($nl_2_br === true)
-        $text = nl2br($text);
+    $text = nl2br($text);
 
     // Удаляем получившиеся лишние переводы строк
     $text = str_replace(']<br>', ']', $text);
