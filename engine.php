@@ -19,7 +19,7 @@ $ENGINE['scripts'] = isset($ENGINE['scripts']) ? $ENGINE['scripts'] : $_SERVER['
 // Default script
 $ENGINE['script_default'] = isset($ENGINE['script_default']) ? $ENGINE['script_default'] : "common";
 // Path to includes
-$ENGINE['includes'] = isset($ENGINE['includes']) ? $ENGINE['path'] : $_SERVER['DOCUMENT_ROOT']."/includes";
+$ENGINE['includes'] = isset($ENGINE['includes']) ? $ENGINE['includes'] : $_SERVER['DOCUMENT_ROOT']."/includes";
 // Template
 $ENGINE['template'] = isset($ENGINE['template']) ? $ENGINE['template'] : "template.htm";
 // Path to css file
