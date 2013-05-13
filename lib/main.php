@@ -42,11 +42,7 @@ if (file_exists($page_address)) {
     scripts_publish(scripts_get($ENGINE['script_default']));
 
     // Headers
-    header("Vary: Accept");
-    if (stristr($_SERVER["HTTP_ACCEPT"], "application/xhtml+xml"))
-        header("Content-Type: application/xhtml+xml; charset=UTF-8");
-    else
-        header("Content-Type: text/html; charset=UTF-8");
+    header("Content-Type: text/html; charset=UTF-8");
 
     // Page
     echo page_all($page_address, $url);

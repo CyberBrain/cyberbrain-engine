@@ -143,10 +143,7 @@ function page_head_tags ($title, $url)
 
     $head_tags = "<title>CyberBrain: ".$title."</title>";
     $head_tags = $head_tags."\n".'<link href ="'.$ENGINE['css'].'" rel="stylesheet" type="text/css" />';
-    if (!stristr($_SERVER["HTTP_ACCEPT"], "application/xhtml+xml"))
-        $head_tags = $head_tags."\n".'<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />';
-    else
-        $head_tags = $head_tags."\n".'<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />';
+    $head_tags = $head_tags."\n".'<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />';
     return $head_tags;
 }
 
