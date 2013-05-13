@@ -87,11 +87,11 @@ function bb_parse_url ($action, $attributes, $content, $params, &$node_object) {
         return true;
     else {
         if (!empty($attributes['default']))
-            $tag_full = 'href="'.htmlspecialchars($attributes['default']).'" title="'.htmlspecialchars($content).'"';
+            $tag_full = 'href="'.$attributes['default'].'" title="'.htmlspecialchars($content).'"';
         else
-            $tag_full = 'href="'.htmlspecialchars($content).'"';
+            $tag_full = 'href="'.$content.'"';
 
-        $out ='<a '.$tag_full.'>'.$content.'</a>';
+        $out ='<a '.$tag_full.'>'.htmlspecialchars($content).'</a>';
 
         return $out;
     }

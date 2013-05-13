@@ -209,8 +209,9 @@ function menu_top_get ($url)
 function menu_bottom_get ($url)
 {
     global $ENGINE;
-    return file_get_contents($ENGINE['includes']."/menu_bottom.txt");
+    $menu = file_get_contents($ENGINE['includes']."/menu_bottom.txt");
+    $menu = str_replace('<!--URL-->', $url, $menu);
+    return $menu;
 }
-
 
 ?>
