@@ -37,8 +37,6 @@ if (empty($FULL_PAGE)) {
     header("HTTP/1.0 404 Not Found"); 
     exit(); }
 else {
-    // Default scripts
-    scripts_publish(scripts_get($ENGINE['script_default']));
     // Headers
     header("Content-Type: text/html; charset=UTF-8");
     // Page

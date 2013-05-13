@@ -65,7 +65,7 @@ function page_build ($content, $url)
         $fullbody = $fullbody.'<div class="footer">'.$content['footer'].'</div>';
 
 
-    $page = file_get_contents($ENGINE['template']);
+    $page = file_get_contents($ENGINE['includes'].'/'.$ENGINE['template']);
     $page = str_replace('<!--REPLACE_HEAD_TAGS-->', page_head_tags($content['title'],$url), $page);
     $page = str_replace('<!--REPLACE_SCRIPT_HEADER-->', $script_header, $page);
     $page = str_replace('<!--REPLACE_MENU_TOP-->', $content['menu_top'], $page);
@@ -93,15 +93,15 @@ function page_cache ($content, $cache_path)
 }
 
 
-function page_content ($page_address)
+function page_content ($page_address, $url)
 {
     global $ENGINE;
 
     $content_unparsed = file_get_contents($page_address);
 
     // top & bottom menu
-    $menu_top = file_get_contents($ENGINE['pages']."/menu_top.txt");
-    $menu_bottom = file_get_contents($ENGINE['pages']."/menu_bottom.txt");
+    $menu_top = menu_top_get($url);
+    $menu_bottom = menu_bottom_get($url);
 
     $content_unparsed = '[menu_top]'.$menu_top.'[/menu_top]'.$content_unparsed;
     $content_unparsed = $content_unparsed.'[menu_bottom]'.$menu_bottom.'[/menu_bottom]';
@@ -184,7 +184,7 @@ function page_all ($url)
         return '404';
 
     // Get content
-    $content = page_content($page_address);
+    $content = page_content($page_address, $url);
 
     // Default scripts
     scripts_publish(scripts_get($ENGINE['script_default']));
@@ -198,5 +198,19 @@ function page_all ($url)
     // Return full page contents
     return $FULL_PAGE;
 }
+
+
+function menu_top_get ($url)
+{
+    global $ENGINE;
+    return file_get_contents($ENGINE['includes']."/menu_top.txt");
+}
+
+function menu_bottom_get ($url)
+{
+    global $ENGINE;
+    return file_get_contents($ENGINE['includes']."/menu_bottom.txt");
+}
+
 
 ?>
