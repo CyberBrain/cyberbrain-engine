@@ -100,7 +100,7 @@ function page_build ($title, $body, $url)
     $content = parser($content);
     $content = page_body_split($content);
 
-    $content['body'] = $content['body'].'<br /><p><font align="right" size="small"><i>Page was built by CyberBrain engine version '.$ENGINE['version'].' at '.date('Y/m/d H:i:s').'.</i></font></p>';
+    $content['body'] = $content['body'].'<br /><p align="right"><small><i>Page was built by CyberBrain engine version '.$ENGINE['version'].' at '.date('Y/m/d H:i:s').'.</i></small></p>';
 
     $page = file_get_contents($ENGINE['template']);
     $page = str_replace('<!--REPLACE_HEAD_TAGS-->', page_head_tags($title,$url), $page);

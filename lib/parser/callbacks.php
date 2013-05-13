@@ -34,9 +34,9 @@ function bb_parse_video ($action, $attributes, $content, $params, &$node_object)
 
         if (!empty($attributes['width'])) {
             $scripts[1] = $scripts[1].' width: "'.$attributes['width'].'",';
-            $img = $img.' width="'.$attributes['width'].'"'; }
+            $img = $img.' height="'.$attributes['width'].'"'; }
 
-        if (!empty($attributes['height'])){
+        if (!empty($attributes['height'])) {
             $scripts[1] = $scripts[1].' height: "'.$attributes['height'].'",';
             $img = $img.' height="'.$attributes['height'].'"'; }
 
