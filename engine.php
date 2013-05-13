@@ -27,11 +27,11 @@ $ENGINE['css'] = isset($ENGINE['css']) ? $ENGINE['css'] : "/style.css";
 // functions =)
 
 // function parser ($body)
-require_once ($ENGINE['path']."/libs/parser.php");
+require_once ($ENGINE['path']."/lib/parser.php");
 ////
 
 // ready
-require_once ($ENGINE['path']."/libs/main.php");
+require_once ($ENGINE['path']."/lib/main.php");
 ////
 
 ################################################################
