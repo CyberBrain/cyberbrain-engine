@@ -51,20 +51,20 @@ function page_body_join($body)
 {
     global $ENGINE;
 
-    // Header & footer
-    $page_header = file_get_contents($ENGINE['pages']."/header.txt");
-    $page_footer = file_get_contents($ENGINE['pages']."/footer.txt");
+    // top & bottom menu
+    $menu_top = file_get_contents($ENGINE['pages']."/menu_top.txt");
+    $menu_bottom = file_get_contents($ENGINE['pages']."/menu_bottom.txt");
 
-    $page_header = str_replace('<!--HEADER-->', '', $page_header);
-    $page_header = str_replace('<!--FOOTER-->', '', $page_header);
+    $menu_top = str_replace('<!--MENU_TOP-->', '', $menu_top);
+    $menu_top = str_replace('<!--MENU_BOTTOM-->', '', $menu_top);
 
-    $full = str_replace('<!--HEADER-->', '', $body);
-    $body = str_replace('<!--FOOTER-->', '', $body);
+    $full = str_replace('<!--MENU_TOP-->', '', $body);
+    $body = str_replace('<!--MENU_BOTTOM-->', '', $body);
 
-    $page_footer = str_replace('<!--HEADER-->', '', $page_footer);
-    $page_footer = str_replace('<!--FOOTER-->', '', $page_footer);
+    $MENU_TOP = str_replace('<!--MENU_TOP-->', '', $MENU_TOP);
+    $MENU_TOP = str_replace('<!--MENU_BOTTOM-->', '', $MENU_TOP);
 
-    $body = $page_header.'<!--HEADER-->'.$body.'<!--FOOTER-->'.$page_footer;
+    $body = $menu_top.'<!--MENU_TOP-->'.$body.'<!--MENU_BOTTOM-->'.$menu_bottom;
 
     return $body;
 }
@@ -73,17 +73,17 @@ function page_body_split($body)
 {
     global $ENGINE;
 
-    $body = str_replace('&lt;!--HEADER--&gt;', '<!--HEADER-->', $body);
-    $body = str_replace('&lt;!--FOOTER--&gt;', '<!--FOOTER-->', $body);
+    $body = str_replace('&lt;!--MENU_TOP--&gt;', '<!--MENU_TOP-->', $body);
+    $body = str_replace('&lt;!--MENU_BOTTOM--&gt;', '<!--MENU_BOTTOM-->', $body);
 
-    $body = explode ('<!--HEADER-->', $body);
+    $body = explode ('<!--MENU_TOP-->', $body);
 
-    $content['header'] = $body[0];
+    $content['menu_top'] = $body[0];
 
-    $body = explode ('<!--FOOTER-->', $body[1]);
+    $body = explode ('<!--MENU_BOTTOM-->', $body[1]);
 
     $content['body'] = $body[0];
-    $content['footer'] = $body[1].'<small><p><i>Page was built by CyberBrain engine version '.$ENGINE['version'].' at '.date('Y/m/d H:i:s').'.</i></p></small>';
+    $content['menu_bottom'] = $body[1];
 
     unset($body);
 
@@ -100,13 +100,14 @@ function page_build ($title, $body, $url)
     $content = parser($content);
     $content = page_body_split($content);
 
+    $content['body'] = $content['body'].'<br /><p><font align="right" size="small"><i>Page was built by CyberBrain engine version '.$ENGINE['version'].' at '.date('Y/m/d H:i:s').'.</i></font></p>';
 
     $page = file_get_contents($ENGINE['template']);
     $page = str_replace('<!--REPLACE_HEAD_TAGS-->', page_head_tags($title,$url), $page);
     $page = str_replace('<!--REPLACE_SCRIPT_HEADER-->', $script_header, $page);
-    $page = str_replace('<!--REPLACE_HEADER-->', $content['header'], $page);
+    $page = str_replace('<!--REPLACE_MENU_TOP-->', $content['menu_top'], $page);
     $page = str_replace('<!--REPLACE_BODY-->', $content['body'], $page);
-    $page = str_replace('<!--REPLACE_FOOTER-->', $content['footer'], $page);
+    $page = str_replace('<!--REPLACE_MENU_BOTTOM-->', $content['menu_bottom'], $page);
     $page = str_replace('<!--REPLACE_SCRIPT_FOOTER-->', $script_footer, $page);
     return $page;
 }
