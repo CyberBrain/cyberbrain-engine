@@ -38,9 +38,7 @@ if (empty($FULL_PAGE)) {
     exit(); }
 else {
     // Headers
-    header("Content-Type: text/html; charset=UTF-8");
-    // Page
-    echo $FULL_PAGE;
+    header("Location: /".$url."",TRUE,303);
 }
 
 ################################################################
