@@ -2,6 +2,7 @@
 
 function time_stamp()
 {
+    global $ENGINE;
     return '<p align="right"><small><i>Page was built by CyberBrain engine version '.$ENGINE['version'].' at '.date('Y/m/d H:i:s').'.</i></small></p>';
 }
 
