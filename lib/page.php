@@ -57,6 +57,8 @@ function page_build ($content, $url)
 {
     global $ENGINE, $script_header, $script_footer;
 
+    $fullbody = '';
+    
     if (!empty($content['header']))
         $fullbody = $fullbody.'<div class="header">'.$content['header'].'</div>'."\n";
     else
